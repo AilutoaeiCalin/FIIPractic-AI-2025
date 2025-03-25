@@ -1,4 +1,7 @@
 import os
+
+from sklearn.utils import shuffle
+
 from src.utils import load_dataset
 from src.id3 import build_tree
 
@@ -6,13 +9,10 @@ from src.id3 import build_tree
 dataset_path = os.path.join("data", "diabetes_dataset.csv")
 data = load_dataset(dataset_path)
 target = "diabet"
+data= shuffle(data,random_state=None)
+train_size = int(len(data) * 0.75)
 
 
-train_size = int(len(data) * 0.8)
-test_size = len(data) - train_size
-print(
-    f"Splitting the dataset into training and testing subsets (70% training, 30% testing)."
-)
 train_data = data[:train_size]
 test_data = data[train_size:]
 
@@ -41,16 +41,14 @@ train_accuracy = correct_train / len(train_data) * 100
 print(f"Training Accuracy: {train_accuracy:.2f}%")
 
 
-correct_predictions = 0  # For accuracy calculation
+correct_predictions = 0
 total_samples = len(test_data)
 
 print("\nPredictions on test data:")
 for index, row in test_data.iterrows():
     prediction = classify(row, decision_tree)  # Predict using the decision tree
-    actual = row[target]  # True label
+    actual = row[target]
     print(f"Sample {index + 1}: Prediction = {prediction}, Actual = {actual}")
-
-    # Count correct predictions
     if prediction == actual:
         correct_predictions += 1
 
